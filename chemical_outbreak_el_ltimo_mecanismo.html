@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHEMICAL OUTBREAK: El último mecanismo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Inter & Share Tech Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        biohazard: {
+                            black: '#05080c',
+                            panel: '#0d131a',
+                            darkcard: '#141c26',
+                            green: '#10b981',
+                            toxic: '#22c55e',
+                            amber: '#f59e0b',
+                            red: '#ef4444',
+                            crimson: '#991b1b',
+                            blue: '#06b6d4',
+                            purple: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #04070a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(34, 197, 94, 0.05) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(239, 68, 68, 0.05) 0%, transparent 45%);
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-tech { font-family: 'Share Tech Mono', monospace; }
+        
+        .bio-glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+        .bio-glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.35); }
+        .bio-border-green { border: 1px solid rgba(34, 197, 94, 0.4); }
+        .bio-border-red { border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        .screen-shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(6px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+            40%, 60% { transform: translate3d(8px, 0, 0); }
+        }
+
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.35) 50%
+            );
+            background-size: 100% 4px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #05080c; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-black">
+
+    <header class="bg-biohazard-panel/95 border-b border-emerald-500/30 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-lg bg-emerald-950/80 border border-emerald-500 flex items-center justify-center bio-glow-green text-emerald-400">
+                    <i class="fa-solid fa-biohazard text-2xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-black text-lg sm:text-xl text-emerald-400 tracking-wider flex items-center gap-2">
+                        CHEMICAL OUTBREAK <span class="text-red-500 text-xs px-2 py-0.5 rounded bg-red-950/80 border border-red-800 font-tech">VER. SN1/SN2 PRO</span>
+                    </h1>
+                    <p class="text-xs text-emerald-200/70 font-tech">SISTEMA DE ANÁLISIS CINÉTICO Y ESTEREOQUÍMICO APOCALÍPTICO</p>
+                </div>
+            </div>
+
+            <!-- Tactical Navigation Tabs -->
+            <nav class="flex items-center gap-2 bg-biohazard-black p-1.5 rounded-xl border border-emerald-500/20">
+                <button onclick="switchTab('tutorial')" id="btn-tab-tutorial" class="px-3 sm:px-4 py-2 rounded-lg font-orbitron font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-emerald-500 text-black shadow-lg">
+                    <i class="fa-solid fa-book-medical"></i>
+                    <span class="hidden md:inline">1. Manual de Supervivencia</span>
+                </button>
+                <button onclick="switchTab('simulator')" id="btn-tab-simulator" class="px-3 sm:px-4 py-2 rounded-lg font-orbitron font-bold text-xs sm:text-sm transition-all flex items-center gap-2 text-gray-400 hover:text-emerald-300">
+                    <i class="fa-solid fa-flask"></i>
+                    <span class="hidden md:inline">2. Laboratorio de Análisis</span>
+                </button>
+                <button onclick="switchTab('game')" id="btn-tab-game" class="px-3 sm:px-4 py-2 rounded-lg font-orbitron font-bold text-xs sm:text-sm transition-all flex items-center gap-2 text-gray-400 hover:text-red-400">
+                    <i class="fa-solid fa-crosshairs text-red-500"></i>
+                    <span>3. Modo Supervivencia Zombie</span>
+                </button>
+            </nav>
+
+            <!-- Sound Toggle -->
+            <button onclick="toggleAudio()" id="audio-btn" class="p-2.5 rounded-lg bg-biohazard-black border border-gray-700 text-gray-300 hover:text-emerald-400 transition" title="Activar/Desactivar Alertas Sonoras">
+                <i class="fa-solid fa-volume-xmark text-lg" id="audio-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-1">
+
+        <section id="tab-tutorial" class="space-y-6">
+            <div class="bg-gradient-to-r from-emerald-950/80 via-biohazard-panel to-red-950/80 border border-emerald-500/40 rounded-2xl p-6 relative overflow-hidden bio-glow-green">
+                <div class="absolute -right-10 -bottom-10 text-emerald-500/10 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-shield-virus"></i>
+                </div>
+                <div class="max-w-3xl relative z-10">
+                    <span class="bg-emerald-950 text-emerald-400 text-xs font-bold font-orbitron px-3 py-1 rounded-full border border-emerald-500/50 uppercase tracking-wider">
+                        <i class="fa-solid fa-radiation mr-1"></i> Protocolo Bioquímico de Emergencia
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-orbitron font-extrabold text-white mt-3">
+                        Mecanismos Químicos SN1 vs SN2
+                    </h2>
+                    <p class="text-gray-300 mt-2 text-sm sm:text-base leading-relaxed">
+                        El virus T-Organic se propaga mediante reacciones de sustitución nucleófila en las células expuestas. Para sintetizar el antídoto y contener la amenaza zombie, debes dominar la **Sustitución Nucleofílica Bimolecular (SN2)** y **Unimolecular (SN1)**. Estudia la cinética y la estereoquímica antes de ingresar a la zona de combate.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mechanism Comparison Cards -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- SN2 Card -->
+                <div class="bg-biohazard-panel border border-cyan-500/40 rounded-2xl p-6 flex flex-col justify-between hover:border-cyan-400 transition duration-300 shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-cyan-500/20 pb-4 mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-cyan-500/20 text-cyan-400 font-orbitron font-bold text-lg px-3 py-1 rounded-lg border border-cyan-500/40">SN2</span>
+                                <h3 class="text-xl font-orbitron font-bold text-white">Ataque Directo Concertado</h3>
+                            </div>
+                            <span class="text-xs bg-cyan-950 text-cyan-300 px-2.5 py-1 rounded-md border border-cyan-800 font-tech">
+                                1 Solo Paso Sincronizado
+                            </span>
+                        </div>
+
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-bolt text-cyan-400 mt-1"></i>
+                                <span><strong>Mecanismo:</strong> Ocurre simultáneamente. El nucleófilo ataca a 180° por el **lóbulo trasero ($\sigma^*$)** del carbono mientras el grupo saliente abandona. <span class="text-cyan-300 font-semibold">¡Sin carbocatión intermedio!</span></span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-gauge-high text-cyan-400 mt-1"></i>
+                                <span><strong>Cinética de 2º Orden:</strong> <code class="bg-black/60 px-2 py-0.5 rounded text-cyan-300 font-tech">v = k[Sustrato][Nucleófilo]</code>. Depende de ambos reactivos.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-rotate-left text-cyan-400 mt-1"></i>
+                                <span><strong>Estereoquímica (Inversión de Walden):</strong> Inversión completa de la configuración espacial (efecto paraguas que se voltea 100%).</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-ban text-cyan-400 mt-1"></i>
+                                <span><strong>Sustrato Favorecido:</strong> Metílico > Primario (1°) > Secundario (2°). <span class="text-red-400 font-semibold">Terciarios (3°) bloqueados por impedimento estérico</span>.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-vial-circle-check text-cyan-400 mt-1"></i>
+                                <span><strong>Condiciones Ideales:</strong> Nucleófilo **fuerte** (OH⁻, CN⁻, I⁻) en **solvente polar aprótico** (Acetona, DMSO, DMF).</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-800 bg-biohazard-black/80 p-3 rounded-xl border border-cyan-900/50">
+                        <span class="text-xs text-cyan-400 font-tech block mb-1"><i class="fa-solid fa-terminal mr-1"></i> Ecuación Sintética SN2:</span>
+                        <div class="text-center font-tech text-xs text-cyan-300 bg-black/80 p-2 rounded border border-gray-800">
+                            Nu⁻ + R-X ➔ [Nu···R···X]‡ ➔ Nu-R + X⁻ (Inversión de Configuración)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SN1 Card -->
+                <div class="bg-biohazard-panel border border-purple-500/40 rounded-2xl p-6 flex flex-col justify-between hover:border-purple-400 transition duration-300 shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-purple-500/20 pb-4 mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-purple-500/20 text-purple-400 font-orbitron font-bold text-lg px-3 py-1 rounded-lg border border-purple-500/40">SN1</span>
+                                <h3 class="text-xl font-orbitron font-bold text-white">Mecanismo por Etapas</h3>
+                            </div>
+                            <span class="text-xs bg-purple-950 text-purple-300 px-2.5 py-1 rounded-md border border-purple-800 font-tech">
+                                2 Etapas con Carbocatión
+                            </span>
+                        </div>
+
+                        <ul class="space-y-3 text-sm text-gray-300">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-layer-group text-purple-400 mt-1"></i>
+                                <span><strong>Mecanismo:</strong> Etapa 1 (lenta): Salida del grupo saliente formando un **carbocatión plano sp² con orbital p vacío**. Etapa 2 (rápida): Ataque del nucleófilo por ambas caras.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-stopwatch text-purple-400 mt-1"></i>
+                                <span><strong>Cinética de 1er Orden:</strong> <code class="bg-black/60 px-2 py-0.5 rounded text-purple-300 font-tech">v = k[Sustrato]</code>. Depende únicamente de la disociación del sustrato.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-arrows-split-up-and-left text-purple-400 mt-1"></i>
+                                <span><strong>Estereoquímica (Mezcla Racémica):</strong> Ataque simétrico por la cara superior o inferior del orbital p (50% Retención + 50% Inversión).</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-crown text-purple-400 mt-1"></i>
+                                <span><strong>Sustrato Favorecido:</strong> Terciario (3°) > Secundario (2°). <span class="text-emerald-400 font-semibold">Alta estabilidad del carbocatión 3° por hiperconjugación</span>.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-droplet text-purple-400 mt-1"></i>
+                                <span><strong>Condiciones Ideales:</strong> Nucleófilo **débil/neutro** (H₂O, CH₃OH) y **solvente polar prótico** (Agua, Etanol) para solvatar iones.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-800 bg-biohazard-black/80 p-3 rounded-xl border border-purple-900/50">
+                        <span class="text-xs text-purple-400 font-tech block mb-1"><i class="fa-solid fa-terminal mr-1"></i> Ecuación Sintética SN1:</span>
+                        <div class="text-center font-tech text-xs text-purple-300 bg-black/80 p-2 rounded border border-gray-800">
+                            R-X ➔ [R⁺] + X⁻ (Lento) | [R⁺] + Nu ➔ R-Nu (50% Retención + 50% Inversión)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="bg-biohazard-panel border border-emerald-500/30 rounded-2xl p-6 shadow-2xl">
+                <h3 class="text-lg font-orbitron font-bold text-emerald-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list"></i> Matriz Comparativa Bioquímica
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-300 border-collapse">
+                        <thead class="text-xs uppercase bg-biohazard-black text-emerald-400 font-orbitron">
+                            <tr>
+                                <th class="p-3 border-b border-gray-800">Factor Bioquímico</th>
+                                <th class="p-3 border-b border-gray-800 text-cyan-400">Ruta SN2</th>
+                                <th class="p-3 border-b border-gray-800 text-purple-400">Ruta SN1</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800 font-tech">
+                            <tr class="hover:bg-gray-800/40">
+                                <td class="p-3 font-semibold text-white">Sustrato (Carbono)</td>
+                                <td class="p-3">Metílico > 1° > 2° (3° Bloqueado por Estabilización Estérica)</td>
+                                <td class="p-3">3° > 2° (1° e Inestable por Alta Energía)</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/40">
+                                <td class="p-3 font-semibold text-white">Fuerza Nucleófilo</td>
+                                <td class="p-3">Fuerte / Aniónico (OH⁻, CN⁻, I⁻)</td>
+                                <td class="p-3">Débil / Neutro (H₂O, ROH)</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/40">
+                                <td class="p-3 font-semibold text-white">Tipo de Disolvente</td>
+                                <td class="p-3">Polar Aprótico (Acetona, DMSO, DMF)</td>
+                                <td class="p-3">Polar Prótico (Agua, Etanol)</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/40">
+                                <td class="p-3 font-semibold text-white">Grupo Saliente</td>
+                                <td class="p-3">Bueno / Excelente (I⁻ > Br⁻ > Cl⁻)</td>
+                                <td class="p-3">Bueno / Excelente (I⁻ > Br⁻ > Cl⁻)</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/40">
+                                <td class="p-3 font-semibold text-white">Resultado Estereoquímico</td>
+                                <td class="p-3">Inversión Total de Walden (100% Inversión)</td>
+                                <td class="p-3">Mezcla Racémica (50% Retención + 50% Inversión)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button onclick="switchTab('simulator')" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold font-orbitron shadow-lg bio-glow-green transition transform hover:scale-105">
+                        Iniciar Motor de Reacción <i class="fa-solid fa-flask-vial ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-simulator" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Variable Control Panel -->
+                <div class="lg:col-span-4 bg-biohazard-panel border border-emerald-500/30 rounded-2xl p-5 space-y-5 shadow-2xl">
+                    <div class="border-b border-gray-800 pb-3 flex items-center justify-between">
+                        <h3 class="font-orbitron font-bold text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders"></i> Motor de Reacción
+                        </h3>
+                        <span id="mech-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-600 font-tech">
+                            SN2 PREDOMINANTE
+                        </span>
+                    </div>
+
+                    <!-- Mode Selector: Direct Mechanism Override or Auto-Predict -->
+                    <div class="bg-biohazard-black/80 p-3 rounded-xl border border-emerald-500/40">
+                        <label class="text-xs text-amber-400 font-bold font-orbitron block mb-2 flex items-center justify-between">
+                            <span><i class="fa-solid fa-route mr-1"></i> Modo / Vía de Reacción</span>
+                            <span class="text-[10px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded font-tech">NUEVO</span>
+                        </label>
+                        <select id="sim-mode" onchange="updateSimulationParams()" class="w-full bg-biohazard-panel border border-amber-500/50 rounded-lg p-2.5 text-xs font-bold text-amber-300 focus:border-amber-400 focus:outline-none font-tech">
+                            <option value="auto" selected>⚡ Auto-Predicción (Basado en Reactivos)</option>
+                            <option value="sn1">🟣 Forzar Mecanismo SN1 (Unimolecular - Carbocatión)</option>
+                            <option value="sn2">🔵 Forzar Mecanismo SN2 (Bimolecular - Concertado)</option>
+                        </select>
+                    </div>
+
+                    <!-- 1. Sustrato -->
+                    <div>
+                        <label class="text-xs text-emerald-300/90 font-bold font-orbitron block mb-2 flex items-center justify-between">
+                            <span>1. Sustrato (Haluro de Alquilo)</span>
+                            <i class="fa-solid fa-dna text-emerald-500"></i>
+                        </label>
+                        <select id="sim-substrate" onchange="updateSimulationParams()" class="w-full bg-biohazard-black border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none font-tech">
+                            <option value="methyl">Metílico - Ej: Bromuro de Metilo (CH₃Br)</option>
+                            <option value="primary" selected>Primario (1°) - Ej: 1-Bromobutano (R-CH₂Br)</option>
+                            <option value="secondary">Secundario (2°) - Ej: 2-Bromobutano (R₂CHBr)</option>
+                            <option value="tertiary">Terciario (3°) - Ej: 2-Bromo-2-metilpropano (R₃CBr)</option>
+                        </select>
+                    </div>
+
+                    <!-- 2. Nucleófilo -->
+                    <div>
+                        <label class="text-xs text-emerald-300/90 font-bold font-orbitron block mb-2 flex items-center justify-between">
+                            <span>2. Nucleófilo</span>
+                            <i class="fa-solid fa-atom text-emerald-500"></i>
+                        </label>
+                        <select id="sim-nucleophile" onchange="updateSimulationParams()" class="w-full bg-biohazard-black border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none font-tech">
+                            <option value="strong" selected>Fuerte (Aniónico) - Ej: OH⁻, CN⁻, I⁻, CH₃O⁻</option>
+                            <option value="weak">Débil (Neutro) - Ej: H₂O, CH₃OH, EtOH</option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Disolvente -->
+                    <div>
+                        <label class="text-xs text-emerald-300/90 font-bold font-orbitron block mb-2 flex items-center justify-between">
+                            <span>3. Disolvente</span>
+                            <i class="fa-solid fa-vial text-emerald-500"></i>
+                        </label>
+                        <select id="sim-solvent" onchange="updateSimulationParams()" class="w-full bg-biohazard-black border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none font-tech">
+                            <option value="aprotic" selected>Polar Aprótico (Acetona, DMSO, DMF)</option>
+                            <option value="protic">Polar Prótico (Agua, Etanol, Metanol)</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. Grupo Saliente -->
+                    <div>
+                        <label class="text-xs text-emerald-300/90 font-bold font-orbitron block mb-2 flex items-center justify-between">
+                            <span>4. Grupo Saliente</span>
+                            <i class="fa-solid fa-door-open text-emerald-500"></i>
+                        </label>
+                        <select id="sim-leaving" onchange="updateSimulationParams()" class="w-full bg-biohazard-black border border-gray-700 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 focus:outline-none font-tech">
+                            <option value="good" selected>Bueno / Excelente (I⁻, Br⁻, Cl⁻, TsO⁻)</option>
+                            <option value="bad">Malo / Inadecuado (OH⁻, F⁻, NH₂⁻)</option>
+                        </select>
+                    </div>
+
+                    <!-- Concentration Sliders -->
+                    <div class="space-y-4 pt-2 border-t border-gray-800 font-tech">
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>[Concentración Sustrato]:</span>
+                                <span id="val-sub-conc" class="text-emerald-400 font-bold">1.0 M</span>
+                            </div>
+                            <input type="range" id="sim-sub-conc" min="0.1" max="3.0" step="0.1" value="1.0" oninput="updateSimulationParams()" class="w-full accent-emerald-500 bg-gray-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-300 mb-1">
+                                <span>[Concentración Nucleófilo]:</span>
+                                <span id="val-nu-conc" class="text-emerald-400 font-bold">1.0 M</span>
+                            </div>
+                            <input type="range" id="sim-nu-conc" min="0.1" max="3.0" step="0.1" value="1.0" oninput="updateSimulationParams()" class="w-full accent-emerald-500 bg-gray-800 h-2 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="pt-3 flex gap-2">
+                        <button onclick="playSimulation()" id="btn-play-sim" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-bold font-orbitron py-2.5 rounded-lg shadow bio-glow-green transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-play"></i> Simular Reacción
+                        </button>
+                        <button onclick="resetSimulation()" class="bg-biohazard-black hover:bg-gray-800 text-gray-300 font-bold py-2.5 px-4 rounded-lg border border-gray-700 transition" title="Reiniciar">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Visualizers & Energy Canvas -->
+                <div class="lg:col-span-8 space-y-6">
+
+                    <!-- Molecular Mechanism Canvas -->
+                    <div class="bg-biohazard-panel border border-emerald-500/30 rounded-2xl p-4 shadow-2xl relative overflow-hidden">
+                        <div class="flex justify-between items-center mb-3 px-2">
+                            <h4 class="font-orbitron text-sm font-bold text-emerald-400 flex items-center gap-2">
+                                <i class="fa-solid fa-microscope text-emerald-400"></i>
+                                Visualizador Mecanístico & Orbitales de Alta Definición
+                            </h4>
+                            <span id="sim-status-text" class="text-xs font-tech text-gray-400 bg-black/60 px-3 py-1 rounded-full border border-gray-800">
+                                Estado: En espera de reactivos
+                            </span>
+                        </div>
+
+                        <!-- Canvas area -->
+                        <div class="relative w-full aspect-video bg-biohazard-black rounded-xl border border-gray-800 overflow-hidden flex items-center justify-center scanlines">
+                            <canvas id="moleculesCanvas" class="w-full h-full block"></canvas>
+                        </div>
+
+                        <div class="mt-3 flex flex-wrap justify-between text-xs text-gray-400 px-2 font-tech gap-2">
+                            <span><i class="fa-solid fa-circle text-cyan-400 mr-1"></i>Nucleófilo (Nu⁻) + Par Libre</span>
+                            <span><i class="fa-solid fa-circle text-emerald-400 mr-1"></i>Carbono Central (C)</span>
+                            <span><i class="fa-solid fa-circle text-red-500 mr-1"></i>Grupo Saliente (X⁻)</span>
+                            <span><i class="fa-solid fa-eye text-purple-400 mr-1"></i>Orbitales $\sigma^*$ / $p_z$ vacíos</span>
+                        </div>
+                    </div>
+
+                    <!-- Diagnostics & Energy Profile Graph -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <!-- Potential Energy Profile Canvas -->
+                        <div class="bg-biohazard-panel border border-gray-800 rounded-xl p-4 shadow-md">
+                            <h5 class="text-xs font-orbitron font-bold text-emerald-400 mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-chart-line text-emerald-400"></i> Perfil de Energía Potencial ($E_a$)
+                            </h5>
+                            <div class="w-full h-44 bg-biohazard-black rounded-lg border border-gray-800">
+                                <canvas id="energyCanvas" class="w-full h-full block"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Kinetic Calculations -->
+                        <div class="bg-biohazard-panel border border-gray-800 rounded-xl p-4 flex flex-col justify-between shadow-md">
+                            <div>
+                                <h5 class="text-xs font-orbitron font-bold text-emerald-400 mb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-calculator text-cyan-400"></i> Diagnóstico de Velocidad
+                                </h5>
+                                <div class="bg-black/80 p-3 rounded-lg border border-gray-800 space-y-2 text-xs font-tech">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Mecanismo Activo:</span>
+                                        <span id="calc-mech" class="font-bold text-cyan-400">SN2</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Ley de Velocidad:</span>
+                                        <span id="calc-rate-law" class="text-white">v = k [R-X]¹ [Nu]¹</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Velocidad Relativa:</span>
+                                        <span id="calc-speed" class="font-bold text-emerald-400">1.25 M/s</span>
+                                    </div>
+                                    <div class="flex justify-between border-t border-gray-800 pt-2">
+                                        <span class="text-gray-400">Resultado Estereoquímico:</span>
+                                        <span id="calc-stereo" class="text-cyan-300 font-bold">Inversión de Walden</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="sim-explanation" class="text-xs text-gray-400 mt-2 leading-relaxed">
+                                El sustrato primario con nucleófilo fuerte favorece la vía bimolecular SN2 en 1 solo paso concertado.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 3: ZOMBIE SURVIVAL APOCALYPSE GAME -->
+        <section id="tab-game" class="hidden space-y-6">
+
+            <!-- Survival HUD Header -->
+            <div class="bg-biohazard-panel border border-red-500/40 rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden bio-glow-red">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-lg border-2 border-red-500 bg-black flex flex-col items-center justify-center text-red-500 font-orbitron font-black text-xs shadow-lg text-center p-1">
+                            <span id="game-level-num" class="text-sm font-black text-red-400">NIVEL 1</span>
+                        </div>
+                        <div>
+                            <div class="text-xs font-orbitron uppercase text-emerald-400 font-bold tracking-wider" id="level-title-display">Nivel 1: El laboratorio</div>
+                            <div class="w-48 sm:w-64 bg-black h-5 rounded-full overflow-hidden border border-gray-800 p-0.5 mt-1">
+                                <div id="health-bar" class="bg-gradient-to-r from-red-600 via-amber-500 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 100%;"></div>
+                            </div>
+                            <span id="health-text" class="text-xs font-tech text-emerald-400 font-bold mt-1 block">100% Estado Vital Normal</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-6 font-tech">
+                        <div class="text-right">
+                            <span class="text-xs text-gray-400 uppercase font-orbitron block">Zombies Eliminados</span>
+                            <span id="game-kills" class="font-orbitron text-2xl font-black text-emerald-400">0</span>
+                        </div>
+                        <div class="text-right border-l border-gray-800 pl-6">
+                            <span class="text-xs text-gray-400 uppercase font-orbitron block">Puntos de Antídoto</span>
+                            <span id="game-score" class="font-orbitron text-2xl font-black text-amber-400">0 pts</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Survival Arena & Problem Diagnostic -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left: Animated Combat Canvas Arena -->
+                <div class="lg:col-span-5 bg-biohazard-panel border border-red-500/30 rounded-2xl p-4 flex flex-col justify-between shadow-xl">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-orbitron text-xs font-bold text-red-400 uppercase tracking-widest flex items-center gap-2">
+                                <i class="fa-solid fa-crosshairs text-red-500"></i> Zona de Combate Infectada
+                            </h4>
+                            <span id="enemy-label" class="text-xs font-tech bg-red-950 text-red-400 px-2.5 py-0.5 rounded border border-red-800">
+                                Horda de Infectados
+                            </span>
+                        </div>
+
+                        <!-- Zombie Duel Canvas Arena -->
+                        <div class="relative w-full aspect-square bg-biohazard-black rounded-xl border border-gray-800 overflow-hidden scanlines">
+                            <canvas id="zombieCombatCanvas" class="w-full h-full block"></canvas>
+
+                            <!-- Alert overlay -->
+                            <div id="combat-alert" class="absolute bottom-3 left-3 right-3 bg-red-950/90 border border-red-500 p-2 rounded-lg text-center font-orbitron text-xs text-red-200 hidden animate-pulse">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1"></i> ¡ZOMBIES APROXIMÁNDOSE!
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-400 mt-4 font-tech text-center">
+                        Responde correctamente con la reacción química adecuada para disparar el antídoto y neutralizar al zombie.
+                    </p>
+                </div>
+
+                <!-- Right: Quiz Diagnostic Challenge Box -->
+                <div class="lg:col-span-7 bg-biohazard-panel border border-emerald-500/30 rounded-2xl p-6 shadow-xl flex flex-col justify-between relative">
+
+                    <div id="quiz-content-area">
+                        <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
+                            <span id="quiz-category" class="bg-biohazard-black text-emerald-400 text-xs font-orbitron px-3 py-1 rounded-full border border-emerald-500/30">
+                                Desafío 1: Identificación de Reacción
+                            </span>
+                            <span id="quiz-difficulty" class="text-xs font-tech text-purple-400">
+                                Nivel: Superviviente Novato
+                            </span>
+                        </div>
+
+                        <h3 id="quiz-question-text" class="text-base sm:text-lg font-bold text-white mb-4 leading-snug">
+                            Cargando datos de la infección...
+                        </h3>
+
+                        <!-- Chemical Equation Box -->
+                        <div id="quiz-chem-box" class="bg-black/90 p-4 rounded-xl border border-emerald-500/30 font-tech text-emerald-400 text-center text-sm sm:text-base mb-6 bio-glow-green">
+                            CH₃CH₂CH₂CH₂-Br + NaOH ──(Acetona)──► ?
+                        </div>
+
+                        <!-- Multiple Choice Options -->
+                        <div id="quiz-options-container" class="space-y-3 font-sans">
+                            <!-- Options rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-800 flex justify-between items-center">
+                        <span class="text-xs text-gray-500 font-tech">
+                            Protegido por Protocolo Biohazard.
+                        </span>
+                        <button onclick="restartGame()" id="btn-restart-game" class="px-4 py-2 bg-biohazard-black hover:bg-gray-800 text-emerald-400 rounded-lg text-xs font-orbitron transition border border-emerald-500/30">
+                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Reiniciar Partida
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BIOHAZARD DIAGNOSTIC LOSS MODAL (WHEN PLAYER WRONGLY ANSWERS) -->
+    <div id="diagnostic-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-biohazard-panel border-2 border-red-500 rounded-2xl max-w-2xl w-full p-6 shadow-2xl bio-glow-red relative overflow-hidden screen-shake">
+
+            <div class="absolute -right-10 -top-10 text-red-500/10 text-9xl pointer-events-none">
+                <i class="fa-solid fa-biohazard"></i>
+            </div>
+
+            <div class="flex items-center gap-4 border-b border-red-900/60 pb-4 mb-4">
+                <div class="w-12 h-12 rounded-lg bg-red-950 border border-red-500 flex items-center justify-center text-red-500 text-2xl animate-pulse">
+                    <i class="fa-solid fa-skull-crossbones"></i>
+                </div>
+                <div>
+                    <h3 class="font-orbitron font-extrabold text-xl text-red-500 tracking-wider">
+                        ¡ATAQUE ZOMBIE IMPLACABLE!
+                    </h3>
+                    <p class="text-xs text-red-300 font-tech">Sintetizaste la reacción incorrecta y los infectados penetraron la defensa.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-black/90 p-4 rounded-xl border border-red-900/50 text-sm">
+                    <div class="text-xs text-red-400 font-orbitron font-bold uppercase mb-1">
+                        <i class="fa-solid fa-circle-xmark mr-1"></i> Error en la Predicción Química:
+                    </div>
+                    <p id="modal-user-error" class="text-gray-300 italic">
+                        Seleccionaste una vía no favorecida...
+                    </p>
+                </div>
+
+                <div class="bg-black/90 p-4 rounded-xl border border-emerald-500/40 text-sm space-y-2">
+                    <div class="text-xs text-emerald-400 font-orbitron font-bold uppercase">
+                        <i class="fa-solid fa-book-medical mr-1"></i> Explicación Teórica Correcta (Lee con atención):
+                    </div>
+                    <p id="modal-correct-explanation" class="text-emerald-100/90 leading-relaxed">
+                        Explicación detallada...
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-gray-800 flex flex-wrap items-center justify-between gap-3 font-tech">
+                <div class="text-xs text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-hourglass-start text-amber-400 animate-spin"></i>
+                    <span>Tiempo de lectura obligatorio: <strong id="modal-timer" class="text-base text-white font-bold">6</strong>s</span>
+                </div>
+                <button id="modal-close-btn" disabled onclick="closeDiagnosticModal()" class="px-6 py-2.5 rounded-xl bg-biohazard-black text-gray-500 font-orbitron font-bold text-sm cursor-not-allowed transition border border-gray-800">
+                    Reagrupar y Continuar <i class="fa-solid fa-person-running ml-1"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GAME END SUMMARY MODAL -->
+    <div id="summary-modal" class="fixed inset-0 bg-black/90 backdrop-blur-lg z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-biohazard-panel border-2 border-emerald-500 rounded-2xl max-w-2xl w-full p-6 shadow-2xl bio-glow-green relative">
+            <div class="text-center border-b border-gray-800 pb-4 mb-4">
+                <i class="fa-solid fa-trophy text-amber-400 text-4xl mb-2"></i>
+                <h3 class="font-orbitron font-black text-2xl text-emerald-400" id="summary-title">¡REPORTE FINAL DE SUPERVIVENCIA!</h3>
+                <p class="text-xs text-gray-400 font-tech mt-1">Evaluación completa de desempeño químico en el apocalipsis</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-6 font-tech text-center">
+                <div class="bg-black/80 p-3 rounded-xl border border-gray-800">
+                    <span class="text-xs text-gray-400 block">Puntuación Total</span>
+                    <span id="summary-score" class="text-xl font-bold text-amber-400">0 pts</span>
+                </div>
+                <div class="bg-black/80 p-3 rounded-xl border border-gray-800">
+                    <span class="text-xs text-gray-400 block">Zombies Aniquilados</span>
+                    <span id="summary-kills" class="text-xl font-bold text-emerald-400">0</span>
+                </div>
+                <div class="bg-black/80 p-3 rounded-xl border border-gray-800">
+                    <span class="text-xs text-gray-400 block">Salud Vital Restante</span>
+                    <span id="summary-health" class="text-xl font-bold text-red-400">100%</span>
+                </div>
+            </div>
+
+            <div class="bg-black/90 p-4 rounded-xl border border-emerald-500/30 text-sm space-y-2 mb-6">
+                <div class="text-xs text-emerald-400 font-orbitron font-bold uppercase mb-2">
+                    <i class="fa-solid fa-list-check mr-1"></i> Resumen de Temas Clave para Repasar:
+                </div>
+                <ul id="summary-review-list" class="space-y-1.5 text-xs text-gray-300 font-tech">
+                    <li>• Mecanismo SN2: Ataque por la espalda e Inversión de Walden de 1er orden en el nucleófilo.</li>
+                    <li>• Mecanismo SN1: Formación del intermediario carbocatiónico sp² con mezcla racémica.</li>
+                    <li>• Disolventes Polares Apróticos (Acetona, DMSO) aceleran reacciones SN2.</li>
+                    <li>• Disolventes Polares Próticos (H₂O, Etanol) estabilizan carbocationes en SN1.</li>
+                </ul>
+            </div>
+
+            <button onclick="restartGame(); document.getElementById('summary-modal').classList.add('hidden');" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-orbitron font-bold text-sm rounded-xl shadow-lg bio-glow-green transition">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Jugar Nuevamente
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-biohazard-black border-t border-gray-800 py-4 text-center text-xs text-gray-500 font-tech">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>&copy; CHEMICAL OUTBREAK: El último mecanismo - Proyecto Universitario de Química Orgánica</span>
+            <span class="text-emerald-500"><i class="fa-solid fa-flask mr-1"></i> SN1 (Unimolecular) vs SN2 (Bimolecular)</span>
+        </div>
+    </footer>
+
+    <script>
+        // Global App State
+        let currentTab = 'tutorial';
+        let audioEnabled = false;
+        let audioCtx = null;
+
+        // Simulator State
+        let simMode = 'auto'; // 'auto', 'sn1', 'sn2'
+        let simSubstrate = 'primary';
+        let simNucleophile = 'strong';
+        let simSolvent = 'aprotic';
+        let simLeaving = 'good';
+        let simSubConc = 1.0;
+        let simNuConc = 1.0;
+        let simAnimFrame = null;
+        let simProgress = 0;
+        let simIsRunning = false;
+
+        // Zombie Game State
+        let gameHealth = 100;
+        let gameKills = 0;
+        let gameScore = 0;
+        let currentQuestionIdx = 0;
+        let modalTimerInterval = null;
+
+        // Zombie Canvas combat state
+        let combatState = 'idle'; // 'idle', 'hero_shooting', 'zombie_attacking'
+        let combatProgress = 0;
+
+        // QUIZ DATASET WITH 3 PROGRESSIVE LEVELS
+        const quizQuestions = [
+            {
+                level: 1,
+                levelTitle: "Nivel 1: El laboratorio",
+                category: "Identificación de Mecanismo",
+                difficulty: "Novato",
+                question: "Al ingresar al laboratorio de contención, encuentras la primera puerta blindada. ¿Qué característica define fundamentalmente al mecanismo SN2?",
+                chemBox: "Nu⁻ + R-X  ──►  [Nu···R···X]‡  ──►  Nu-R + X⁻",
+                options: [
+                    { text: "Forma un intermediario carbocatiónico plano sp²", correct: false },
+                    { text: "Ocurre en un solo paso concertado sin formar carbocatión", correct: true },
+                    { text: "Su velocidad depende únicamente de la concentración del sustrato", correct: false },
+                    { text: "Ocurre exclusivamente en sustratos terciarios", correct: false }
+                ],
+                explanation: "La reacción SN2 (Sustitución Nucleofílica Bimolecular) es un proceso concertado de 1 solo paso: el ataque del nucleófilo por la espalda y la salida del grupo saliente ocurren de forma simultánea, sin formar carbocatión."
+            },
+            {
+                level: 1,
+                levelTitle: "Nivel 1: El laboratorio",
+                category: "Intermediario Reaccional",
+                difficulty: "Novato",
+                question: "¿Cuál es la especie intermedia clave producida en la reacción SN1 que NO existe en la reacción SN2?",
+                chemBox: "R-X  ──(Etapa Lenta)──►  [R⁺] + X⁻",
+                options: [
+                    { text: "Un radical libre de alta energía", correct: false },
+                    { text: "Un carbanión con carga negativa", correct: false },
+                    { text: "Un carbocatión trigonal plano sp²", correct: true },
+                    { text: "Un estado de transición penta-coordinado", correct: false }
+                ],
+                explanation: "En la reacción SN1, la primera etapa (lenta) implica la disociación del grupo saliente para generar un carbocatión plano sp² (R⁺)."
+            },
+            {
+                level: 2,
+                levelTitle: "Nivel 2: La ciudad infestada",
+                category: "Ataque Zombie en las Calles",
+                difficulty: "Intermedio",
+                question: "En las calles de la ciudad, te acorrala una horda zombie. Procesas 1-bromobutano (sustrato 1°) con NaOH (nucleófilo fuerte) en acetona (polar aprótico). ¿Qué reacción sintetiza el antídoto?",
+                chemBox: "CH₃CH₂CH₂CH₂-Br + OH⁻  ──(Acetona)──►  CH₃CH₂CH₂CH₂-OH + Br⁻",
+                options: [
+                    { text: "Mecanismo SN2 (Ataque directo bimolecular por la espalda)", correct: true },
+                    { text: "Mecanismo SN1 (Disociación lenta con carbocatión)", correct: false },
+                    { text: "Adición Electrofílica Viral", correct: false },
+                    { text: "Reacción Bloqueada por impedimento estérico", correct: false }
+                ],
+                explanation: "El 1-bromobutano es un sustrato primario (1°) con bajo impedimento estérico. En presencia de un nucleófilo fuerte cargado (OH⁻) y disolvente polar aprótico (acetona), reacciona por mecanismo SN2."
+            },
+            {
+                level: 2,
+                levelTitle: "Nivel 2: La ciudad infestada",
+                category: "Análisis Estereoquímico",
+                difficulty: "Intermedio",
+                question: "Sintetizas el compuesto partiendo del enantiómero puro (2R)-2-clorobutano con NaI en DMSO (polar aprótico). ¿Cuál es la geometría espacial del producto final?",
+                chemBox: "(2R)-2-clorobutano + NaI  ──(DMSO)──►  (2S)-2-yodobutano",
+                options: [
+                    { text: "Retención completa de la configuración (2R)", correct: false },
+                    { text: "Mezcla racémica inactiva 50% R / 50% S", correct: false },
+                    { text: "Destrucción total del centro quiral", correct: false },
+                    { text: "Inversión de Walden obteniendo el enantiómero (2S)", correct: true }
+                ],
+                explanation: "En las reacciones SN2, el nucleófilo ataca exactamente a 180° por la espalda del grupo saliente, invirtiendo la configuración absoluta del carbono (Inversión de Walden)."
+            },
+            {
+                level: 2,
+                levelTitle: "Nivel 2: La ciudad infestada",
+                category: "Efecto del Disolvente",
+                difficulty: "Intermedio",
+                question: "Sometes bromuro de ter-butilo (terciario 3°) a ebullición en agua (disolvente polar prótico). ¿Por qué este disolvente favorece la vía SN1?",
+                chemBox: "(CH₃)₃C-Br + H₂O  ──(Solvólisis)──►  (CH₃)₃C-OH + HBr",
+                options: [
+                    { text: "Incrementa el impedimento estérico alrededor del carbono", correct: false },
+                    { text: "Solvata y estabiliza el carbocatión 3° y el anión Br⁻ por enlaces de H", correct: true },
+                    { text: "Acelera el ataque directo por la espalda", correct: false },
+                    { text: "Elimina la energía de activación por completo", correct: false }
+                ],
+                explanation: "Los disolventes polares próticos (Agua, Etanol) contienen hidrógenos electronegativos capaces de formar puentes de H, estabilizando eficazmente tanto al carbocatión intermedio como al anión saliente."
+            },
+            {
+                level: 3,
+                levelTitle: "Nivel 3: El laboratorio secreto",
+                category: "Cinética & Energía Avanzada",
+                difficulty: "Avanzado",
+                question: "Desafío Final: En la solvólisis SN1 del cloruro de ter-butilo con metanol, si duplicas la concentración del nucleófilo [CH₃OH], ¿cómo cambia la velocidad de reacción?",
+                chemBox: "v = k [(CH₃)₃C-Cl]¹",
+                options: [
+                    { text: "La velocidad se duplica inmediatamente", correct: false },
+                    { text: "La velocidad se reduce a la mitad", correct: false },
+                    { text: "La velocidad permanece totalmente constante", correct: true },
+                    { text: "La velocidad se cuadruplica", correct: false }
+                ],
+                explanation: "La reacción SN1 es de primer orden: v = k[Sustrato]. La etapa determinante es la disociación lenta del sustrato. La concentración del nucleófilo no altera la velocidad del proceso."
+            },
+            {
+                level: 3,
+                levelTitle: "Nivel 3: El laboratorio secreto",
+                category: "Estereoquímica Racémica",
+                difficulty: "Avanzado",
+                question: "Desafío Final: Reaccionas el sustrato ópticamente activo (S)-3-cloro-3-metilhexano (3°) mediante solvólisis en agua. ¿Qué producto se forma?",
+                chemBox: "(S)-3-cloro-3-metilhexano + H₂O  ──►  Mezcla de Productos",
+                options: [
+                    { text: "Una mezcla racémica ópticamente inactiva (50% R / 50% S)", correct: true },
+                    { text: "100% del enantiómero con configuración invertida (R)", correct: false },
+                    { text: "100% del enantiómero con configuración retenida (S)", correct: false },
+                    { text: "Un compuesto achiral sin centros estereogénicos", correct: false }
+                ],
+                explanation: "El carbocatión intermedio SN1 es trigonal plano (sp²). El nucleófilo ataca con un 50% de probabilidad por arriba y 50% por abajo, produciendo una mezcla racémica."
+            },
+            {
+                level: 3,
+                levelTitle: "Nivel 3: El laboratorio secreto",
+                category: "Perfil Energético Comparativo",
+                difficulty: "Avanzado",
+                question: "Desafío Final: Analizando los perfiles de energía potencial de reacción, ¿cuál es la diferencia fundamental entre el gráfico SN1 y SN2?",
+                chemBox: "SN1 (2 Barreras + Valle C⁺)  vs  SN2 (1 sola Barrera ‡)",
+                options: [
+                    { text: "La reacción SN2 no posee energía de activación", correct: false },
+                    { text: "La reacción SN1 tiene 1 barrera y SN2 tiene 3 barreras", correct: false },
+                    { text: "SN2 genera un intermediario en un valle energético", correct: false },
+                    { text: "SN1 presenta 2 barreras energéticas con un valle intermediario (C⁺); SN2 presenta 1 sola barrera", correct: true }
+                ],
+                explanation: "El perfil de energía SN1 posee dos picos (dos estados de transición) separados por un valle que representa al carbocatión intermedio. En SN2 hay un único pico (un solo estado de transición concertado)."
+            }
+        ];
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-btn');
+            const icon = document.getElementById('audio-icon');
+            if (audioEnabled) {
+                initAudio();
+                btn.classList.add('border-emerald-500', 'text-emerald-400');
+                icon.className = 'fa-solid fa-volume-high text-lg text-emerald-400';
+                playSound('beep');
+            } else {
+                btn.classList.remove('border-emerald-500', 'text-emerald-400');
+                icon.className = 'fa-solid fa-volume-xmark text-lg';
+            }
+        }
+
+        function playSound(type) {
+            if (!audioEnabled || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'beep') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now); osc.stop(now + 0.1);
+                } else if (type === 'gunshot') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now); osc.stop(now + 0.2);
+                } else if (type === 'zombie_attack') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now); osc.stop(now + 0.4);
+                }
+            } catch (e) {
+                console.error("Audio error:", e);
+            }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            ['tutorial', 'simulator', 'game'].forEach(t => {
+                const sec = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`btn-tab-${t}`);
+                if (t === tabId) {
+                    sec.classList.remove('hidden');
+                    btn.className = "px-3 sm:px-4 py-2 rounded-lg font-orbitron font-bold text-xs sm:text-sm transition-all flex items-center gap-2 bg-emerald-500 text-black shadow-lg bio-glow-green";
+                } else {
+                    sec.classList.add('hidden');
+                    btn.className = "px-3 sm:px-4 py-2 rounded-lg font-orbitron font-bold text-xs sm:text-sm transition-all flex items-center gap-2 text-gray-400 hover:text-emerald-300";
+                }
+            });
+
+            playSound('beep');
+
+            if (tabId === 'simulator') {
+                initSimulatorCanvases();
+                updateSimulationParams();
+            } else if (tabId === 'game') {
+                initZombieCanvas();
+                loadQuizQuestion();
+            }
+        }
+
+        function updateSimulationParams() {
+            simMode = document.getElementById('sim-mode').value;
+            simSubstrate = document.getElementById('sim-substrate').value;
+            simNucleophile = document.getElementById('sim-nucleophile').value;
+            simSolvent = document.getElementById('sim-solvent').value;
+            simLeaving = document.getElementById('sim-leaving').value;
+            simSubConc = parseFloat(document.getElementById('sim-sub-conc').value);
+            simNuConc = parseFloat(document.getElementById('sim-nu-conc').value);
+
+            document.getElementById('val-sub-conc').innerText = simSubConc.toFixed(1) + " M";
+            document.getElementById('val-nu-conc').innerText = simNuConc.toFixed(1) + " M";
+
+            let mechanism = "SN2";
+            let explanation = "";
+            let forcedWarning = "";
+
+            if (simLeaving === 'bad') {
+                mechanism = "BLOCKED";
+                explanation = "El grupo saliente (OH⁻ / F⁻) es muy básico e inestable para abandonar por sí solo. La reacción está bloqueada.";
+            } else if (simMode === 'sn1') {
+                mechanism = "SN1";
+                if (simSubstrate === 'methyl' || simSubstrate === 'primary') {
+                    forcedWarning = " (⚠️ Forzado: Inestable por baja estabilidad de carbocatión 1°)";
+                }
+                explanation = "Mecanismo SN1 forzado: Disociación previa del grupo saliente para generar el carbocatión sp²." + forcedWarning;
+            } else if (simMode === 'sn2') {
+                mechanism = "SN2";
+                if (simSubstrate === 'tertiary') {
+                    mechanism = "BLOCKED";
+                    explanation = "⚠️ Vía SN2 bloqueada en sustratos terciarios (3°) debido al intenso impedimento estérico (los metilos impiden el ataque a 180° por la espalda).";
+                } else {
+                    explanation = "Mecanismo SN2 forzado: Ataque bimolecular directo por la espalda con inversión de Walden.";
+                }
+            } else {
+                // Auto prediction
+                if (simSubstrate === 'tertiary') {
+                    mechanism = "SN1";
+                    explanation = "Sustrato terciario (3°) con impedimento estérico extremo bloquea SN2; reacciona preferentemente por SN1 formando un carbocatión terciario estable.";
+                } else if (simSubstrate === 'primary' || simSubstrate === 'methyl') {
+                    mechanism = "SN2";
+                    explanation = "Sustrato metílico/primario con mínimo impedimento estérico favorece un único paso concertado bimolecular SN2.";
+                } else { // secondary
+                    if (simNucleophile === 'strong' && simSolvent === 'aprotic') {
+                        mechanism = "SN2";
+                        explanation = "Sustrato secundario (2°) con nucleófilo fuerte en disolvente polar aprótico favorece el ataque directo SN2.";
+                    } else {
+                        mechanism = "SN1";
+                        explanation = "Sustrato secundario (2°) con nucleófilo débil en disolvente polar prótico canaliza la disociación lenta SN1.";
+                    }
+                }
+            }
+
+            const badge = document.getElementById('mech-badge');
+            const calcMech = document.getElementById('calc-mech');
+            const calcRate = document.getElementById('calc-rate-law');
+            const calcStereo = document.getElementById('calc-stereo');
+            const calcSpeed = document.getElementById('calc-speed');
+
+            let calculatedSpeed = 0;
+
+            if (mechanism === "SN2") {
+                badge.innerText = simMode === 'sn2' ? "SN2 FORZADO" : "SN2 PREDOMINANTE";
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-600 font-tech";
+                calcMech.innerText = "SN2 (Concertado)";
+                calcMech.className = "font-bold text-cyan-400";
+                calcRate.innerText = "v = k [R-X]¹ [Nu]¹";
+                calcStereo.innerText = "100% Inversión de Walden";
+                calcStereo.className = "text-cyan-300 font-bold";
+                calculatedSpeed = 1.25 * simSubConc * simNuConc;
+            } else if (mechanism === "SN1") {
+                badge.innerText = simMode === 'sn1' ? "SN1 FORZADO" : "SN1 PREDOMINANTE";
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-purple-950 text-purple-400 border border-purple-600 font-tech";
+                calcMech.innerText = "SN1 (Carbocatión sp²)";
+                calcMech.className = "font-bold text-purple-400";
+                calcRate.innerText = "v = k [R-X]¹";
+                calcStereo.innerText = "Mezcla Racémica (50% Ret. / 50% Inv.)";
+                calcStereo.className = "text-purple-300 font-bold";
+                calculatedSpeed = 0.95 * simSubConc;
+            } else {
+                badge.innerText = "REACCIÓN BLOQUEADA";
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-red-950 text-red-400 border border-red-600 font-tech";
+                calcMech.innerText = "Sin Reacción";
+                calcMech.className = "font-bold text-red-500";
+                calcRate.innerText = "v = 0";
+                calcStereo.innerText = "Sin alteración";
+                calcStereo.className = "text-gray-400 font-bold";
+                calculatedSpeed = 0;
+            }
+
+            calcSpeed.innerText = calculatedSpeed.toFixed(2) + " M/s";
+            document.getElementById('sim-explanation').innerText = explanation;
+
+            drawEnergyGraph(mechanism);
+            renderMolecularFrame(0, mechanism);
+        }
+
+        function initSimulatorCanvases() {
+            const mCanvas = document.getElementById('moleculesCanvas');
+            const eCanvas = document.getElementById('energyCanvas');
+            if (mCanvas && mCanvas.parentElement) {
+                mCanvas.width = mCanvas.parentElement.clientWidth;
+                mCanvas.height = mCanvas.parentElement.clientHeight;
+            }
+            if (eCanvas && eCanvas.parentElement) {
+                eCanvas.width = eCanvas.parentElement.clientWidth;
+                eCanvas.height = eCanvas.parentElement.clientHeight;
+            }
+        }
+
+        function playSimulation() {
+            if (simIsRunning) return;
+            simIsRunning = true;
+            document.getElementById('sim-status-text').innerText = "Estado: Simulación Cinética en Curso...";
+            let startTime = performance.now();
+            const duration = 2800;
+
+            function animate(now) {
+                let elapsed = now - startTime;
+                simProgress = Math.min(1, elapsed / duration);
+
+                let mech = document.getElementById('calc-mech').innerText.includes('SN2') ? 'SN2' : 
+                          (document.getElementById('calc-mech').innerText.includes('SN1') ? 'SN1' : 'BLOCKED');
+
+                renderMolecularFrame(simProgress, mech);
+                drawEnergyGraph(mech, simProgress);
+
+                if (simProgress < 1) {
+                    simAnimFrame = requestAnimationFrame(animate);
+                } else {
+                    simIsRunning = false;
+                    document.getElementById('sim-status-text').innerText = "Estado: Reacción e Inversión Completadas";
+                }
+            }
+            simAnimFrame = requestAnimationFrame(animate);
+        }
+
+        function resetSimulation() {
+            if (simAnimFrame) cancelAnimationFrame(simAnimFrame);
+            simIsRunning = false;
+            simProgress = 0;
+            document.getElementById('sim-status-text').innerText = "Estado: En espera de reactivos";
+            updateSimulationParams();
+        }
+
+        function drawEnergyGraph(mechanism, progress = 0) {
+            const canvas = document.getElementById('energyCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Subtle Background Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)'; ctx.lineWidth = 1;
+            for (let x = 0; x < w; x += 25) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+            for (let y = 0; y < h; y += 25) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+            // Axes
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(35, 15); ctx.lineTo(35, h - 25); ctx.lineTo(w - 15, h - 25);
+            ctx.stroke();
+
+            ctx.fillStyle = '#94a3b8'; ctx.font = '10px Orbitron';
+            ctx.fillText("Energía (E)", 8, 12);
+            ctx.fillText("Coordenada de Reacción", w - 140, h - 8);
+
+            if (mechanism === 'SN2') {
+                // SN2 Curve
+                const startX = 40, startY = h - 45;
+                const endX = w - 25, endY = h - 60;
+                const peakX = w * 0.5, peakY = 28;
+
+                // Gradient fill
+                let grad = ctx.createLinearGradient(0, 0, 0, h);
+                grad.addColorStop(0, 'rgba(6, 182, 212, 0.35)');
+                grad.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.bezierCurveTo(w * 0.35, peakY, w * 0.65, peakY, endX, endY);
+                ctx.lineTo(endX, h - 25); ctx.lineTo(startX, h - 25); ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#06b6d4'; ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.bezierCurveTo(w * 0.35, peakY, w * 0.65, peakY, endX, endY);
+                ctx.stroke();
+
+                // Peak TS Marker
+                ctx.fillStyle = '#06b6d4';
+                ctx.beginPath(); ctx.arc(peakX, peakY, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 10px Orbitron';
+                ctx.fillText("[Nu···R···X]‡ (SN2 TS)", peakX - 55, peakY - 8);
+
+                // Animated position orb
+                if (progress > 0) {
+                    let px = startX + progress * (endX - startX);
+                    let py = startY + (peakY - startY) * Math.sin(progress * Math.PI);
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 10;
+                    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+            } else if (mechanism === 'SN1') {
+                // SN1 Curve with 2 peaks & intermediate valley
+                const startX = 40, startY = h - 45;
+                const endX = w - 25, endY = h - 60;
+
+                let grad = ctx.createLinearGradient(0, 0, 0, h);
+                grad.addColorStop(0, 'rgba(168, 85, 247, 0.35)');
+                grad.addColorStop(1, 'rgba(168, 85, 247, 0.0)');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.bezierCurveTo(w * 0.20, 20, w * 0.32, 20, w * 0.45, h - 70);
+                ctx.bezierCurveTo(w * 0.55, 45, w * 0.70, 45, endX, endY);
+                ctx.lineTo(endX, h - 25); ctx.lineTo(startX, h - 25); ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.bezierCurveTo(w * 0.20, 20, w * 0.32, 20, w * 0.45, h - 70);
+                ctx.bezierCurveTo(w * 0.55, 45, w * 0.70, 45, endX, endY);
+                ctx.stroke();
+
+                // Peak 1 & Valley & Peak 2
+                ctx.fillStyle = '#e879f9'; ctx.font = 'bold 9px Orbitron';
+                ctx.beginPath(); ctx.arc(w * 0.28, 25, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillText("TS₁ (R-X‡)", w * 0.28 - 20, 15);
+
+                ctx.fillStyle = '#c084fc';
+                ctx.beginPath(); ctx.arc(w * 0.45, h - 70, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillText("C⁺ (Valle R⁺)", w * 0.45 - 25, h - 78);
+
+                ctx.fillStyle = '#e879f9';
+                ctx.beginPath(); ctx.arc(w * 0.62, 50, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillText("TS₂", w * 0.62 - 10, 38);
+
+                // Animated position orb
+                if (progress > 0) {
+                    let px = startX + progress * (endX - startX);
+                    let py;
+                    if (progress < 0.5) {
+                        py = startY + (25 - startY) * Math.sin(progress * 2 * (Math.PI / 2));
+                    } else {
+                        py = (h - 70) + (endY - (h - 70)) * Math.sin((progress - 0.5) * 2 * (Math.PI / 2));
+                    }
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 10;
+                    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+            } else {
+                // Blocked
+                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.setLineDash([5, 5]);
+                ctx.beginPath(); ctx.moveTo(40, h - 45); ctx.lineTo(w - 25, h - 45); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#ef4444'; ctx.font = 'bold 11px Orbitron';
+                ctx.fillText("⚠️ Barrera Energética Infranqueable / Estérica", w * 0.22, h / 2);
+            }
+        }
+
+        function renderMolecularFrame(progress, mechanism) {
+            const canvas = document.getElementById('moleculesCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Subtle chemical background grid
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.05)'; ctx.lineWidth = 1;
+            for (let x = 0; x < w; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+            for (let y = 0; y < h; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+            if (mechanism === 'SN2') {
+                // High-Def SN2 Backside Attack & Walden Inversion Animation
+                let nuX = 70 + progress * (cx - 130);
+                let xLeaveX = cx + 60 + progress * 160;
+                let umbrellaAngle = (progress - 0.5) * Math.PI * 0.45;
+
+                // 1. Draw sigma* antibonding orbital lobe behind Carbon (Purple/Cyan translucent glow)
+                if (progress < 0.9) {
+                    let lobeAlpha = Math.max(0, 0.25 - progress * 0.2);
+                    ctx.fillStyle = `rgba(6, 182, 212, ${lobeAlpha})`;
+                    ctx.beginPath();
+                    ctx.ellipse(cx - 35, cy, 30, 20, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'rgba(6, 182, 212, 0.6)'; ctx.font = '10px Share Tech Mono';
+                    ctx.fillText("Lóbulo σ* (LUMO)", cx - 75, cy - 25);
+                }
+
+                // 2. Forming / Breaking Dotted Bonds in Transition State
+                if (progress > 0.2 && progress < 0.8) {
+                    ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+                    ctx.beginPath(); ctx.moveTo(nuX + 20, cy); ctx.lineTo(cx - 22, cy); ctx.stroke(); // Nu...C
+                    ctx.strokeStyle = '#f87171';
+                    ctx.beginPath(); ctx.moveTo(cx + 22, cy); ctx.lineTo(xLeaveX - 20, cy); ctx.stroke(); // C...X
+                    ctx.setLineDash([]);
+                }
+
+                // 3. Central Carbon Atom (Emerald glow)
+                ctx.shadowColor = '#10b981'; ctx.shadowBlur = 12;
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#000000'; ctx.font = 'bold 12px Orbitron'; ctx.fillText("C", cx - 5, cy + 4);
+
+                // 4. Nucleophile Nu⁻ (Cyan sphere with lone pair dots)
+                ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#06b6d4';
+                ctx.beginPath(); ctx.arc(nuX, cy, 20, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#000000'; ctx.font = 'bold 10px Share Tech Mono'; ctx.fillText(":Nu⁻", nuX - 12, cy + 4);
+
+                // 5. Leaving Group X⁻ (Red sphere with electron dots)
+                if (progress < 0.98) {
+                    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath(); ctx.arc(xLeaveX, cy, 20, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px Share Tech Mono'; ctx.fillText(":X⁻", xLeaveX - 10, cy + 4);
+                }
+
+                // 6. Hydrogens / Substituents (3D Wedge-Dash Umbrella Inversion)
+                [-1, 0.7, 1].forEach((dir, idx) => {
+                    let offAngle = umbrellaAngle + (dir * 0.75);
+                    let hx = cx + Math.sin(offAngle) * 52;
+                    let hy = cy + Math.cos(offAngle) * (idx === 1 ? -1 : 1) * 52;
+
+                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = idx === 1 ? 5 : 3;
+                    if (idx === 1) ctx.setLineDash([2, 2]); // Hashed wedge
+                    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(hx, hy); ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.beginPath(); ctx.arc(hx, hy, 11, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#000000'; ctx.font = 'bold 9px Share Tech Mono';
+                    ctx.fillText(`R${idx+1}`, hx - 6, hy + 3);
+                });
+
+                // Top label: Walden Inversion
+                ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 12px Orbitron';
+                ctx.fillText(`Inversión de Walden: ${Math.round(progress * 100)}%`, cx - 80, 25);
+
+            } else if (mechanism === 'SN1') {
+                // High-Def SN1 Stepwise Mechanism with Unhybridized p-Orbital
+                let xLeaveX = cx + 50 + Math.min(1, progress * 2) * 140;
+                let isCarbocation = progress >= 0.35;
+
+                // 1. Central Carbon Atom (sp3 -> sp2 conversion)
+                ctx.shadowColor = isCarbocation ? '#a855f7' : '#10b981'; ctx.shadowBlur = 12;
+                ctx.fillStyle = isCarbocation ? '#a855f7' : '#10b981';
+                ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px Orbitron'; 
+                ctx.fillText(isCarbocation ? "C⁺" : "C", cx - (isCarbocation ? 9 : 5), cy + 4);
+
+                // 2. Unhybridized empty p-orbital lobes (Purple lobes above and below C+)
+                if (isCarbocation) {
+                    ctx.fillStyle = 'rgba(168, 85, 247, 0.35)'; ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 1.5;
+                    // Upper lobe (+)
+                    ctx.beginPath(); ctx.ellipse(cx, cy - 40, 16, 26, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#e879f9'; ctx.font = 'bold 10px Orbitron'; ctx.fillText("+", cx - 4, cy - 36);
+
+                    // Lower lobe (-)
+                    ctx.fillStyle = 'rgba(168, 85, 247, 0.35)';
+                    ctx.beginPath(); ctx.ellipse(cx, cy + 40, 16, 26, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = '#e879f9'; ctx.font = 'bold 10px Orbitron'; ctx.fillText("-", cx - 3, cy + 44);
+
+                    ctx.fillStyle = '#c084fc'; ctx.font = '10px Share Tech Mono';
+                    ctx.fillText("Orbital p Vacío (sp²)", cx + 25, cy - 50);
+                }
+
+                // 3. Leaving Group X⁻ departing
+                ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath(); ctx.arc(xLeaveX, cy, 20, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px Share Tech Mono'; ctx.fillText(":X⁻", xLeaveX - 10, cy + 4);
+
+                // 4. Planar trigonal R groups (120 degree orientation when carbocation is formed)
+                let rAngles = isCarbocation ? [Math.PI, Math.PI / 3, -Math.PI / 3] : [Math.PI * 0.8, Math.PI * 0.2, -Math.PI * 0.4];
+                rAngles.forEach((ang, idx) => {
+                    let rx = cx + Math.sin(ang) * 55;
+                    let ry = cy + Math.cos(ang) * 55;
+
+                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(rx, ry); ctx.stroke();
+
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.beginPath(); ctx.arc(rx, ry, 11, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#000000'; ctx.font = 'bold 9px Share Tech Mono';
+                    ctx.fillText(`R${idx+1}`, rx - 6, ry + 3);
+                });
+
+                // 5. Symmetric Nu⁻ Attack from Top and Bottom (Racemic 50/50)
+                if (progress > 0.5) {
+                    let nuProg = (progress - 0.5) * 2;
+                    let nuY1 = 15 + nuProg * (cy - 65);
+                    let nuY2 = (h - 15) - nuProg * (cy - 65);
+
+                    ctx.shadowColor = '#38bdf8'; ctx.shadowBlur = 8;
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.beginPath(); ctx.arc(cx, nuY1, 16, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(cx, nuY2, 16, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    ctx.fillStyle = '#000000'; ctx.font = 'bold 9px Share Tech Mono';
+                    ctx.fillText("Nu (50%)", cx - 18, nuY1 + 3);
+                    ctx.fillText("Nu (50%)", cx - 18, nuY2 + 3);
+                }
+
+                ctx.fillStyle = '#c084fc'; ctx.font = 'bold 12px Orbitron';
+                ctx.fillText(progress < 0.5 ? "Etapa 1: Ionización Lenta" : "Etapa 2: Ataque Racémico 50/50", cx - 90, 25);
+
+            } else {
+                // Blocked Animation
+                ctx.fillStyle = '#ef4444'; ctx.font = 'bold 16px Orbitron';
+                ctx.fillText("¡REACCIÓN BLOQUEADA / IMPEDIMENTO ESTÉRICO!", cx - 180, cy);
+            }
+        }
+
+        function initZombieCanvas() {
+            const zCanvas = document.getElementById('zombieCombatCanvas');
+            if (zCanvas && zCanvas.parentElement) {
+                zCanvas.width = zCanvas.parentElement.clientWidth;
+                zCanvas.height = zCanvas.parentElement.clientHeight;
+            }
+        }
+
+        function drawZombieCombatFrame() {
+            const canvas = document.getElementById('zombieCombatCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Dark Toxic Street Atmosphere
+            ctx.fillStyle = '#070a0d'; ctx.fillRect(0, 0, w, h);
+
+            // Biohazard particles floating
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.18)';
+            for (let i = 0; i < 20; i++) {
+                let px = (Math.sin(i * 99 + Date.now() * 0.0012) * 0.5 + 0.5) * w;
+                let py = (Math.cos(i * 33 + Date.now() * 0.0012) * 0.5 + 0.5) * h;
+                ctx.beginPath(); ctx.arc(px, py, (i % 3) + 1.5, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // Ground Line
+            ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(0, h - 30); ctx.lineTo(w, h - 30); ctx.stroke();
+
+            // Left: Cyberpunk Tactical Agent
+            let heroX = 65;
+            let heroY = h - 30;
+
+            // Agent Helmet & Visor Glow
+            ctx.fillStyle = '#0f172a'; ctx.fillRect(heroX - 16, heroY - 55, 32, 28);
+            ctx.fillStyle = '#10b981'; ctx.shadowColor = '#10b981'; ctx.shadowBlur = 8;
+            ctx.fillRect(heroX, heroY - 48, 20, 7); // Visor
+            ctx.shadowBlur = 0;
+
+            // Tactical Armor Body
+            ctx.fillStyle = '#1e293b'; ctx.fillRect(heroX - 18, heroY - 27, 36, 27);
+            ctx.fillStyle = '#047857'; ctx.fillRect(heroX - 14, heroY - 22, 28, 16);
+
+            // Laser Cannon Rifle
+            ctx.fillStyle = '#334155'; ctx.fillRect(heroX + 5, heroY - 32, 30, 8);
+            ctx.fillStyle = '#06b6d4'; ctx.fillRect(heroX + 25, heroY - 30, 10, 4);
+
+            // Red Laser Sight Line
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+            ctx.beginPath(); ctx.moveTo(heroX + 35, heroY - 28); ctx.lineTo(w - 70, heroY - 28); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Right: Mutated Bio-Zombie
+            let zombieX = w - 65;
+            let zombieY = h - 30;
+
+            if (combatState === 'zombie_attacking') {
+                zombieX -= combatProgress * 90;
+            }
+
+            // Zombie Mutated Head
+            ctx.fillStyle = '#3f6212'; ctx.beginPath(); ctx.arc(zombieX, zombieY - 45, 18, 0, Math.PI * 2); ctx.fill();
+            // Glowing Toxic Eyes
+            ctx.fillStyle = '#ef4444'; ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 10;
+            ctx.beginPath(); ctx.arc(zombieX - 7, zombieY - 48, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Mutant Body & Slime Claws
+            ctx.fillStyle = '#1a2e05'; ctx.fillRect(zombieX - 16, zombieY - 27, 32, 27);
+            ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 3.5;
+            ctx.beginPath(); ctx.moveTo(zombieX - 10, zombieY - 18); ctx.lineTo(zombieX - 38, zombieY - 12); ctx.stroke();
+
+            // Antidote Plasma Shot
+            if (combatState === 'hero_shooting') {
+                let projX = heroX + 35 + combatProgress * (zombieX - heroX - 45);
+
+                // Double Helix Chemical Projectile
+                ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 12;
+                ctx.fillStyle = '#06b6d4';
+                ctx.beginPath(); ctx.arc(projX, heroY - 28, 9, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#a855f7';
+                ctx.beginPath(); ctx.arc(projX - 12, heroY - 28, 6, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuestionIdx];
+            
+            document.getElementById('game-level-num').innerText = `NIVEL ${q.level}`;
+            document.getElementById('level-title-display').innerText = q.levelTitle;
+            document.getElementById('quiz-category').innerText = `${q.category} (${currentQuestionIdx + 1}/${quizQuestions.length})`;
+            document.getElementById('quiz-difficulty').innerText = `Dificultad: ${q.difficulty}`;
+            document.getElementById('quiz-question-text').innerText = q.question;
+            document.getElementById('quiz-chem-box').innerText = q.chemBox;
+
+            const optContainer = document.getElementById('quiz-options-container');
+            optContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-biohazard-black border border-gray-800 hover:border-emerald-500 hover:bg-gray-900 transition text-sm text-gray-200 flex items-center justify-between group";
+                btn.onclick = () => handleAnswer(opt.correct, q, opt.text);
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-full bg-black group-hover:bg-emerald-500 group-hover:text-black font-orbitron font-bold text-xs flex items-center justify-center transition border border-gray-700">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span>${opt.text}</span>
+                    </div>
+                    <i class="fa-solid fa-crosshairs text-gray-600 group-hover:text-emerald-400 text-xs"></i>
+                `;
+                optContainer.appendChild(btn);
+            });
+
+            combatState = 'idle';
+            drawZombieCombatFrame();
+        }
+
+        function handleAnswer(isCorrect, questionObj, selectedOptionText) {
+            if (isCorrect) {
+                playSound('gunshot');
+                combatState = 'hero_shooting';
+                let start = performance.now();
+
+                function animShoot(now) {
+                    combatProgress = Math.min(1, (now - start) / 350);
+                    drawZombieCombatFrame();
+                    if (combatProgress < 1) {
+                        requestAnimationFrame(animShoot);
+                    } else {
+                        gameKills += 1;
+                        gameScore += 300;
+                        document.getElementById('game-kills').innerText = gameKills;
+                        document.getElementById('game-score').innerText = gameScore + " pts";
+
+                        currentQuestionIdx += 1;
+                        if (currentQuestionIdx >= quizQuestions.length) {
+                            showGameEndSummary(true);
+                        } else {
+                            loadQuizQuestion();
+                        }
+                    }
+                }
+                requestAnimationFrame(animShoot);
+
+            } else {
+                playSound('zombie_attack');
+                combatState = 'zombie_attacking';
+                let start = performance.now();
+
+                function animBite(now) {
+                    combatProgress = Math.min(1, (now - start) / 350);
+                    drawZombieCombatFrame();
+                    if (combatProgress < 1) {
+                        requestAnimationFrame(animBite);
+                    } else {
+                        gameHealth = Math.max(0, gameHealth - 35);
+                        document.getElementById('health-bar').style.width = gameHealth + "%";
+                        document.getElementById('health-text').innerText = `${gameHealth}% Estado Vital Alterado`;
+
+                        triggerDiagnosticModal(questionObj, selectedOptionText);
+                    }
+                }
+                requestAnimationFrame(animBite);
+            }
+        }
+
+        function triggerDiagnosticModal(questionObj, selectedText) {
+            const modal = document.getElementById('diagnostic-modal');
+            document.getElementById('modal-user-error').innerText = `Seleccionaste: "${selectedText}". La vía formulada falló y la horda atravesó tu barrera.`;
+            document.getElementById('modal-correct-explanation').innerText = questionObj.explanation;
+
+            modal.classList.remove('hidden');
+
+            let timeLeft = 6;
+            const timerElem = document.getElementById('modal-timer');
+            const closeBtn = document.getElementById('modal-close-btn');
+
+            closeBtn.disabled = true;
+            closeBtn.className = "px-6 py-2.5 rounded-xl bg-biohazard-black text-gray-500 font-orbitron font-bold text-sm cursor-not-allowed transition border border-gray-800";
+            timerElem.innerText = timeLeft;
+
+            if (modalTimerInterval) clearInterval(modalTimerInterval);
+
+            modalTimerInterval = setInterval(() => {
+                timeLeft -= 1;
+                timerElem.innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(modalTimerInterval);
+                    closeBtn.disabled = false;
+                    closeBtn.className = "px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-orbitron font-bold text-sm shadow-lg bio-glow-green transition cursor-pointer";
+                    timerElem.innerText = "0";
+                }
+            }, 1000);
+        }
+
+        function closeDiagnosticModal() {
+            document.getElementById('diagnostic-modal').classList.add('hidden');
+            if (gameHealth <= 0) {
+                showGameEndSummary(false);
+            } else {
+                loadQuizQuestion();
+            }
+        }
+
+        function showGameEndSummary(victory) {
+            const modal = document.getElementById('summary-modal');
+            document.getElementById('summary-title').innerText = victory ? "¡VICTORIA BIOQUÍMICA ALCANZADA!" : "¡INFECCIÓN CRÍTICA DETECTADA!";
+            document.getElementById('summary-score').innerText = gameScore + " pts";
+            document.getElementById('summary-kills').innerText = gameKills;
+            document.getElementById('summary-health').innerText = gameHealth + "%";
+            modal.classList.remove('hidden');
+        }
+
+        function restartGame() {
+            gameHealth = 100;
+            gameKills = 0;
+            gameScore = 0;
+            currentQuestionIdx = 0;
+
+            document.getElementById('game-kills').innerText = "0";
+            document.getElementById('game-score').innerText = "0 pts";
+            document.getElementById('health-bar').style.width = "100%";
+            document.getElementById('health-text').innerText = "100% Estado Vital Normal";
+
+            loadQuizQuestion();
+        }
+
+        window.addEventListener('resize', () => {
+            if (currentTab === 'simulator') {
+                initSimulatorCanvases();
+                updateSimulationParams();
+            } else if (currentTab === 'game') {
+                initZombieCanvas();
+            }
+        });
+
+        window.onload = function() {
+            switchTab('tutorial');
+        };
+    </script>
+</body>
+</html>
